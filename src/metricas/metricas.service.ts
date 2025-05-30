@@ -1,11 +1,29 @@
 import { Injectable } from '@nestjs/common';
 import { CreateMetricaDto } from './dto/create-metrica.dto';
 import { UpdateMetricaDto } from './dto/update-metrica.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Metrica } from './entities/metrica.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class MetricasService {
-  create(createMetricaDto: CreateMetricaDto) {
-    return 'This action adds a new metrica';
+
+  constructor(
+    @InjectRepository(Metrica, 'metricsConnection') 
+    private metricasRepo: Repository<Metrica>
+  ) {}
+
+  async create(createMetricaDto: CreateMetricaDto) {
+
+    const metrica = this.metricasRepo.create({
+      ruta: createMetricaDto.ruta,
+      metodo: createMetricaDto.metodo,
+      usuarioId: createMetricaDto.usuarioId,
+      timestamp: new Date().toISOString()
+    })
+
+    const resultMetrica = await this.metricasRepo.save(metrica)
+    return resultMetrica
   }
 
   findAll() {

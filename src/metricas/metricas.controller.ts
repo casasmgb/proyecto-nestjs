@@ -2,14 +2,15 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { MetricasService } from './metricas.service';
 import { CreateMetricaDto } from './dto/create-metrica.dto';
 import { UpdateMetricaDto } from './dto/update-metrica.dto';
+import { Metrica } from './entities/metrica.entity';
 
 @Controller('metricas')
 export class MetricasController {
   constructor(private readonly metricasService: MetricasService) {}
 
   @Post()
-  create(@Body() createMetricaDto: CreateMetricaDto) {
-    return this.metricasService.create(createMetricaDto);
+  async create(@Body() createMetricaDto: CreateMetricaDto): Promise<Metrica> {
+    return await this.metricasService.create(createMetricaDto);
   }
 
   @Get()
