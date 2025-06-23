@@ -8,12 +8,13 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeOrmConficReservas } from './providers/database_reservas';
 import { EspecialidadesModule } from './especialidades/especialidades.module';
+import { AutenticacionModule } from './autenticacion/autenticacion.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({isGlobal: true}),
     TypeOrmModule.forRootAsync({ useClass: TypeOrmConficReservas }),
-    UsuariosModule, MetricasModule, EspecialidadesModule
+    UsuariosModule, MetricasModule, EspecialidadesModule, AutenticacionModule
   ],
   controllers: [AppController],
   providers: [AppService],
