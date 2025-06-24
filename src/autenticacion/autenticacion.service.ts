@@ -6,6 +6,8 @@ import { DataSource, Repository } from 'typeorm';
 import { LoginDto } from './dto/login-autenticacion.dto';
 import { Estados } from 'src/entities/Estados';
 import { throwError } from 'src/utils/error.handling';
+import { JwtService } from '@nestjs/jwt';
+import { jwtConfig } from './config/jwt.config';
 
 @Injectable()
 export class AutenticacionService {
@@ -13,7 +15,8 @@ export class AutenticacionService {
     constructor(
         @InjectRepository(Usuarios)
         private usuarioRepository: Repository<Usuarios>,
-        private dataSource: DataSource
+        private dataSource: DataSource,
+        private jwtService: JwtService
     ){}
 
     protected hashPassword(password: string): string {
@@ -55,7 +58,7 @@ export class AutenticacionService {
         return usuario
     }
 
-    async loginWithSql (loginDto: LoginDto): Promise<Usuarios | null> {
+    async loginWithSql (loginDto: LoginDto): Promise<any | null> {
         // Hashear el password
         const hash_password = this.hashPassword(loginDto.usu_pasword);
         const query = `
@@ -73,7 +76,7 @@ export class AutenticacionService {
             WHERE TRUE
             AND u.usu_usuario = $1
             AND u.usu_password = $2
-            AND u.est_id = 1
+            AND u.est_id = 1;
         `
         let usuario = await this.dataSource.query(query, [
             loginDto.usu_usuario,
@@ -81,8 +84,25 @@ export class AutenticacionService {
         ])
 
         usuario = usuario[0]
-        if(!usuario) throwError(401, 'El suusario no existe')
-        return usuario
+        if(!usuario) throwError(401, 'El ususario no existe')
+        // Generar el payload
+        const payload = {
+            usu_id: usuario.usu_id,
+            per_id: usuario.per_id
+        }
+        
+        const token_nuevo = this.jwtService.sign(payload, jwtConfig.signOptions)
+
+        // retornar datos de autenticacion
+        return {
+            usuario: {
+                usu_usuario: usuario.usu_usuario,
+                per_nombre_completo: usuario.nombre_completo,
+                per_documento_identidad: usuario.per_documento_identidad,
+                est_nombre: usuario.est_nombre
+            },
+            token : 'Bearer ' + token_nuevo
+        }
     }
 
  }
