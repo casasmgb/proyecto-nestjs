@@ -14,8 +14,12 @@ export class EspecialidadesService {
     private dataSource: DataSource,
   ){}
 
-  create(createEspecialidadeDto: CreateEspecialidadeDto) {
-    return 'This action adds a new especialidade';
+  async create(createEspecialidadeDto: CreateEspecialidadeDto): Promise<Especialidades>{
+
+    console.log('==========> createEspecialidadeDto')
+    console.log(createEspecialidadeDto)
+
+    return new Especialidades();
   }
 
   async findAllTypeOrm(): Promise<Especialidades[]> {

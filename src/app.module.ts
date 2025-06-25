@@ -1,4 +1,4 @@
-import { MiddlewareConsumer, Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, RequestMethod } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsuariosModule } from './usuarios/usuarios.module';
@@ -9,6 +9,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeOrmConficReservas } from './providers/database_reservas';
 import { EspecialidadesModule } from './especialidades/especialidades.module';
 import { AutenticacionModule } from './autenticacion/autenticacion.module';
+import { AutenticacionMiddleware } from './middlewares/autenticacion/autenticacion.middleware';
+import { UsuariosController } from './usuarios/usuarios.controller';
+import { EspecialidadesController } from './especialidades/especialidades.controller';
 
 @Module({
   imports: [
@@ -20,7 +23,22 @@ import { AutenticacionModule } from './autenticacion/autenticacion.module';
   providers: [AppService],
 })
 export class AppModule {
-  configure (cunsumer: MiddlewareConsumer){
-    cunsumer.apply(MetricasMiddleware).forRoutes('*')
+  configure (consumer: MiddlewareConsumer){
+    consumer.apply(MetricasMiddleware).forRoutes('*');
+    consumer.apply(AutenticacionMiddleware).exclude(
+      'autenticacion/(.*)',
+      'metricas/(.*)',
+      {
+        path: 'especialidad/publicos',
+        method: RequestMethod.GET
+      }
+    ).forRoutes(
+      UsuariosController,
+      EspecialidadesController,
+      {
+        path: 'admin/*',
+        method: RequestMethod.POST
+      }
+    );
   }
 }
