@@ -10,7 +10,7 @@ export class CreateEspecialidadeDto {
     @ApiProperty()
     @IsString()
     @IsOptional()
-    public esp_descripcion: string;
+    public esp_observacion: string;
 
     @IsNumber()
     @IsNotEmpty()

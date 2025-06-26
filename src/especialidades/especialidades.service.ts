@@ -15,11 +15,32 @@ export class EspecialidadesService {
   ){}
 
   async create(createEspecialidadeDto: CreateEspecialidadeDto): Promise<Especialidades>{
+    // TODO: generar el id siguiente
+    const sql_id = `
+    SELECT COALESCE(MAX(esp_id), 0) + 1 AS ultimo_id
+    FROM parametricas.especialidades;
+    `
+    const result_id = (await this.dataSource.query(sql_id))[0]
+    const id_siguiente = result_id.ultimo_id;
 
-    console.log('==========> createEspecialidadeDto')
-    console.log(createEspecialidadeDto)
-
-    return new Especialidades();
+    // TODO: sql de insersion
+    const sql_insert = `
+      INSERT INTO parametricas.especialidades (
+        esp_id,
+        esp_nombre,
+        esp_observacion,
+        usuario_registro
+      ) VALUES ($1, $2, $3, $4)
+      RETURNING (esp_id, esp_nombre, esp_observacion, fecha_registro);
+    `
+    const result_especilidad = await this.dataSource.query(sql_insert,[
+      id_siguiente,
+      createEspecialidadeDto.esp_nombre,
+      createEspecialidadeDto.esp_observacion || 'SIN OBSERVACIONES',
+      createEspecialidadeDto.usu_id
+    ])
+    // retornar datos.
+    return result_especilidad[0];
   }
 
   async findAllTypeOrm(): Promise<Especialidades[]> {

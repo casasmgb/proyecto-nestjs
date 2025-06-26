@@ -12,12 +12,14 @@ import { AutenticacionModule } from './autenticacion/autenticacion.module';
 import { AutenticacionMiddleware } from './middlewares/autenticacion/autenticacion.middleware';
 import { UsuariosController } from './usuarios/usuarios.controller';
 import { EspecialidadesController } from './especialidades/especialidades.controller';
+import { PersonasModule } from './personas/personas.module';
+import { PersonasController } from './personas/personas.controller';
 
 @Module({
   imports: [
     ConfigModule.forRoot({isGlobal: true}),
     TypeOrmModule.forRootAsync({ useClass: TypeOrmConficReservas }),
-    UsuariosModule, MetricasModule, EspecialidadesModule, AutenticacionModule
+    UsuariosModule, MetricasModule, EspecialidadesModule, AutenticacionModule, PersonasModule
   ],
   controllers: [AppController],
   providers: [AppService],
@@ -35,6 +37,7 @@ export class AppModule {
     ).forRoutes(
       UsuariosController,
       EspecialidadesController,
+      PersonasController,
       {
         path: 'admin/*',
         method: RequestMethod.POST
