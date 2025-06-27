@@ -25,8 +25,19 @@ export class AutenticacionMiddleware implements NestMiddleware {
 
     try {
       const decodificado = this.jwtService.verify(token)
-      req['usu_id'] = decodificado.usu_id
-      req.body.usu_id = decodificado.usu_id
+      switch (req.method) {
+        case 'POST':
+        case 'PUT':
+        case 'PATCH':
+        case 'DELETE':
+          req.body.usu_id = decodificado.usu_id
+          break;    
+        case 'GET':
+          req.query.usu_id = JSON.stringify(decodificado.usu_id)
+          break;
+        default:
+          req['usu_id'] = decodificado.usu_id
+      }
       next();
     } catch (error) {
       return res.status(401).json({

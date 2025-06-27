@@ -14,12 +14,14 @@ import { UsuariosController } from './usuarios/usuarios.controller';
 import { EspecialidadesController } from './especialidades/especialidades.controller';
 import { PersonasModule } from './personas/personas.module';
 import { PersonasController } from './personas/personas.controller';
+import { MedicoModule } from './medico/medico.module';
+import { MedicoController } from './medico/medico.controller';
 
 @Module({
   imports: [
     ConfigModule.forRoot({isGlobal: true}),
     TypeOrmModule.forRootAsync({ useClass: TypeOrmConficReservas }),
-    UsuariosModule, MetricasModule, EspecialidadesModule, AutenticacionModule, PersonasModule
+    UsuariosModule, MetricasModule, EspecialidadesModule, AutenticacionModule, PersonasModule, MedicoModule
   ],
   controllers: [AppController],
   providers: [AppService],
@@ -38,6 +40,7 @@ export class AppModule {
       UsuariosController,
       EspecialidadesController,
       PersonasController,
+      MedicoController,
       {
         path: 'admin/*',
         method: RequestMethod.POST

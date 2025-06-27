@@ -4,6 +4,7 @@ import { UpdatePersonaDto } from './dto/update-persona.dto';
 import { DataSource } from 'typeorm';
 import { throwError } from 'src/utils/error.handling';
 import { verificarRespuesta } from 'src/utils/result.handling';
+import { GetPersonaDto } from './dto/get-persona.dto';
 
 @Injectable()
 export class PersonasService {
@@ -63,6 +64,23 @@ export class PersonasService {
 
       // TODO retornar datos.
       return verificarRespuesta(personas[0], 'Persona creada de forma correcta')
+    } catch (error) {
+      throwError(error.code, error.message)
+    }
+  }
+
+  async findPersona(getPersonaDto: GetPersonaDto) {
+    try {
+      const sql = `
+        SELECT 
+          * 
+        FROM reservas.personas
+        WHERE TRUE
+        ${getPersonaDto.per_documento_identidad ? `AND per_documento_identidad = '${getPersonaDto.per_documento_identidad}'` : ''}  
+        ${getPersonaDto.est_id ? `AND est_id = ${getPersonaDto.est_id}` : ''} 
+      `
+      const result_persona = await this.dataSource.query(sql)
+      return verificarRespuesta(result_persona)
     } catch (error) {
       throwError(error.code, error.message)
     }
