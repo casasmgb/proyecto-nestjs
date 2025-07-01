@@ -76,6 +76,7 @@ export class PersonasService {
           * 
         FROM reservas.personas
         WHERE TRUE
+        ${getPersonaDto.per_id ? `AND per_id = ${getPersonaDto.per_id}` : ''}
         ${getPersonaDto.per_documento_identidad ? `AND per_documento_identidad = '${getPersonaDto.per_documento_identidad}'` : ''}  
         ${getPersonaDto.est_id ? `AND est_id = ${getPersonaDto.est_id}` : ''} 
       `
